@@ -2,13 +2,37 @@ document.addEventListener('DOMContentLoaded', function() {
     // Smooth-scroll navigation for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
         anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
+            const href = this.getAttribute('href');
+            if (href === '#') return;
+            const target = document.querySelector(href);
             if (target) {
+                e.preventDefault();
                 target.scrollIntoView({ behavior: 'smooth' });
             }
         });
     });
+
+    // Mobile nav toggle
+    const toggle = document.querySelector('.nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    if (toggle && navLinks) {
+        toggle.addEventListener('click', function() {
+            const open = navLinks.classList.toggle('open');
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        navLinks.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                navLinks.classList.remove('open');
+                toggle.setAttribute('aria-expanded', 'false');
+            });
+        });
+    }
+
+    // Footer year
+    const year = document.getElementById('year');
+    if (year) {
+        year.textContent = new Date().getFullYear();
+    }
 
     // Contact form submission handler
     const form = document.getElementById('contact-form');
@@ -20,12 +44,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 form.reportValidity();
                 return;
             }
-            status.textContent = 'Sending your message...';
-            status.style.color = '#667eea';
+            if (status) {
+                status.textContent = 'Sending your message...';
+                status.style.color = '#667eea';
+            }
             // Simulate asynchronous submission; replace with real endpoint as needed.
             setTimeout(function() {
-                status.textContent = 'Thank you for your message! We\'ll get back to you soon.';
-                status.style.color = '#2e7d32';
+                if (status) {
+                    status.textContent = 'Thank you for your message! We\'ll get back to you soon.';
+                    status.style.color = '#2e7d32';
+                }
                 form.reset();
             }, 800);
         });
